@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>فۆڕمەکانی بەشی بایۆتەکنەلۆجی</title>
+<meta name="description" content="پۆرتاڵی فۆڕمە فەرمییەکانی بەشی بایۆتەکنەلۆجی – زانکۆی ڕاپەڕین">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="فۆڕمەکان">
+<link id="mf" rel="manifest">
+<link id="ati" rel="apple-touch-icon">
+<link id="fav" rel="icon" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#0f766e; --brand-2:#065f46; --accent:#f59e0b;
+  --bg:#f4f7f6; --surface:#ffffff; --surface-2:#eef3f2;
+  --text:#0f1b19; --muted:#5b6b68; --line:#dce5e3;
+  --shadow:0 1px 2px rgba(15,27,25,.06),0 8px 24px rgba(15,27,25,.07);
+  --radius:18px;
+}
+:root[data-theme="dark"]{
+  --bg:#07100f; --surface:#0f1a18; --surface-2:#16231f;
+  --text:#e8f1ee; --muted:#93a8a3; --line:#1f2f2b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#07100f; --surface:#0f1a18; --surface-2:#16231f;
+    --text:#e8f1ee; --muted:#93a8a3; --line:#1f2f2b;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Noto Kufi Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.7; overflow-x:hidden;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+
+/* ---------- header ---------- */
+.top{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;
+  box-shadow:0 2px 20px rgba(6,95,70,.25);
+}
+.top-row{display:flex;align-items:center;gap:12px;max-width:1100px;margin:0 auto}
+.logo{width:42px;height:42px;border-radius:12px;flex:0 0 auto;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.logo svg{width:26px;height:26px}
+.titles{flex:1;min-width:0}
+.titles h1{margin:0;font-size:1.02rem;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titles p{margin:1px 0 0;font-size:.74rem;opacity:.82;font-weight:400}
+.icon-btn{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  background:rgba(255,255,255,.14);color:#fff;flex:0 0 auto;transition:background .18s
+}
+.icon-btn:active{background:rgba(255,255,255,.3)}
+.icon-btn svg{width:19px;height:19px}
+
+.search-wrap{max-width:1100px;margin:12px auto 0;position:relative}
+.search-wrap svg{position:absolute;inset-inline-start:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;opacity:.55;pointer-events:none}
+#q{
+  width:100%;padding:11px 42px 11px 42px;border-radius:13px;border:0;
+  background:rgba(255,255,255,.16);color:#fff;font-size:.9rem;outline:none
+}
+#q::placeholder{color:rgba(255,255,255,.7)}
+#q:focus{background:rgba(255,255,255,.24)}
+#clearQ{position:absolute;inset-inline-end:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;display:none;place-items:center;background:rgba(255,255,255,.2);color:#fff}
+#clearQ.on{display:grid}
+
+/* ---------- chips ---------- */
+.chips{
+  display:flex;gap:8px;overflow-x:auto;padding:12px 16px 2px;
+  max-width:1100px;margin:0 auto;scrollbar-width:none
+}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  white-space:nowrap;padding:7px 14px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);
+  font-size:.8rem;font-weight:500;display:flex;align-items:center;gap:6px;transition:.18s
+}
+.chip b{font-size:.68rem;background:var(--surface-2);padding:1px 6px;border-radius:999px;font-weight:600}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.chip.on b{background:rgba(255,255,255,.22)}
+
+.bar{
+  max-width:1100px;margin:10px auto 0;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.count{font-size:.76rem;color:var(--muted)}
+.view-tg{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
+.view-tg button{width:30px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--muted)}
+.view-tg button.on{background:var(--brand);color:#fff}
+.view-tg svg{width:15px;height:15px}
+
+/* ---------- cards ---------- */
+main{max-width:1100px;margin:0 auto;padding:14px 16px 90px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
+.grid.list{grid-template-columns:1fr}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
+  transition:transform .16s,box-shadow .16s;position:relative
+}
+.card:active{transform:scale(.985)}
+.thumb{
+  position:relative;aspect-ratio:3/4;background:var(--surface-2);
+  display:grid;place-items:center;overflow:hidden;cursor:pointer
+}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.thumb .ph{width:46px;height:46px;opacity:.3}
+.badge{
+  position:absolute;top:8px;inset-inline-start:8px;z-index:2;
+  background:rgba(15,118,110,.92);color:#fff;font-size:.6rem;font-weight:600;
+  padding:3px 8px;border-radius:999px;backdrop-filter:blur(6px)
+}
+.fav{
+  position:absolute;top:6px;inset-inline-end:6px;z-index:2;
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(0,0,0,.35);color:#fff;backdrop-filter:blur(6px)
+}
+.fav svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.fav.on{color:var(--accent)} .fav.on svg{fill:var(--accent);stroke:var(--accent)}
+
+.body{padding:10px 11px 11px;display:flex;flex-direction:column;flex:1;gap:8px}
+.name{font-size:.81rem;font-weight:600;line-height:1.5;margin:0;cursor:pointer;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cat{font-size:.66rem;color:var(--muted);margin:0}
+.acts{display:flex;gap:6px;margin-top:auto}
+.acts button{
+  flex:1;height:33px;border-radius:9px;display:grid;place-items:center;
+  background:var(--surface-2);color:var(--muted);transition:.16s
+}
+.acts button svg{width:16px;height:16px}
+.acts button.main{background:var(--brand);color:#fff;flex:1.6}
+.acts button:active{opacity:.7}
+
+/* list layout */
+.grid.list .card{flex-direction:row;align-items:stretch}
+.grid.list .thumb{aspect-ratio:auto;width:78px;flex:0 0 78px}
+.grid.list .thumb .ph{width:30px;height:30px}
+.grid.list .badge,.grid.list .fav{display:none}
+.grid.list .body{padding:11px 12px}
+.grid.list .name{-webkit-line-clamp:2}
+.grid.list .acts{margin-top:8px}
+
+/* ---------- skeleton / empty ---------- */
+.sk{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.sk .a{aspect-ratio:3/4;background:linear-gradient(90deg,var(--surface-2) 25%,var(--line) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:sh 1.3s infinite}
+.sk .b{height:11px;margin:11px;border-radius:6px;background:var(--surface-2)}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty svg{width:52px;height:52px;opacity:.3;margin-bottom:12px}
+
+/* ---------- modal ---------- */
+.sheet{
+  position:fixed;inset:0;z-index:100;background:rgba(5,12,11,.72);
+  backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center
+}
+.sheet.on{display:flex}
+.panel{
+  background:var(--surface);width:100%;max-width:860px;height:92vh;
+  border-radius:22px 22px 0 0;display:flex;flex-direction:column;overflow:hidden;
+  animation:up .26s cubic-bezier(.3,.9,.3,1)
+}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:760px){
+  .sheet{align-items:center}
+  .panel{height:88vh;border-radius:20px;animation:pop .2s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+}
+.ph-head{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.ph-head h3{margin:0;font-size:.88rem;font-weight:600;flex:1;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ph-close{width:34px;height:34px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;color:var(--muted);flex:0 0 auto}
+.ph-close svg{width:17px;height:17px}
+.frame{flex:1;position:relative;background:var(--surface-2)}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.frame .load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:.8rem;gap:10px;text-align:center;padding:24px}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:rot .8s linear infinite;margin:0 auto}
+@keyframes rot{to{transform:rotate(360deg)}}
+.ph-foot{
+  padding:11px 14px calc(11px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);display:flex;gap:8px;flex:0 0 auto
+}
+.ph-foot button{
+  flex:1;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  gap:7px;font-size:.82rem;font-weight:600;background:var(--surface-2);color:var(--text)
+}
+.ph-foot button.main{background:var(--brand);color:#fff}
+.ph-foot button svg{width:17px;height:17px}
+.ph-foot button:active{opacity:.75}
+
+/* ---------- toast / install ---------- */
+#toast{
+  position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(16px);
+  background:#0f1b19;color:#fff;padding:10px 18px;border-radius:999px;font-size:.8rem;
+  z-index:200;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 28px rgba(0,0,0,.3);
+  max-width:88vw;text-align:center
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#install{
+  position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));inset-inline-start:16px;inset-inline-end:16px;
+  max-width:460px;margin:0 auto;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow);padding:12px;display:none;align-items:center;gap:11px;z-index:150
+}
+#install.on{display:flex}
+#install .ic{width:40px;height:40px;border-radius:11px;flex:0 0 auto}
+#install div{flex:1;min-width:0}
+#install p{margin:0;font-size:.78rem;font-weight:600}
+#install small{color:var(--muted);font-size:.68rem}
+#install .go{background:var(--brand);color:#fff;padding:8px 14px;border-radius:10px;font-size:.76rem;font-weight:600}
+#install .no{color:var(--muted);padding:8px;font-size:1rem}
+
+footer{text-align:center;padding:24px 16px 34px;color:var(--muted);font-size:.7rem;line-height:1.9}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div class="logo" id="logoBox"></div>
+    <div class="titles">
+      <h1>فۆڕمەکانی بەشی بایۆتەکنەلۆجی</h1>
+      <p>زانکۆی ڕاپەڕین – کۆلێژی زانست</p>
+    </div>
+    <button class="icon-btn" id="favBtn" title="دڵخوازەکان" aria-label="دڵخوازەکان">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg>
+    </button>
+    <button class="icon-btn" id="themeBtn" title="ڕووناک / تاریک" aria-label="گۆڕینی ڕەنگ">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+    <input id="q" type="search" placeholder="گەڕان بەدوای فۆڕمێک…" autocomplete="off">
+    <button id="clearQ" aria-label="سڕینەوە">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="13" height="13"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="chips" id="chips"></nav>
+
+<div class="bar">
+  <span class="count" id="count"></span>
+  <div class="view-tg">
+    <button id="vGrid" class="on" aria-label="تۆڕ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+    </button>
+    <button id="vList" aria-label="لیست">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</div>
+
+<main><div class="grid" id="grid"></div></main>
+
+<footer>
+  زانکۆی ڕاپەڕین – بەشی بایۆتەکنەلۆجی<br>
+  <span id="stamp"></span>
+</footer>
+
+<!-- preview sheet -->
+<div class="sheet" id="sheet">
+  <div class="panel">
+    <div class="ph-head">
+      <h3 id="pvName"></h3>
+      <button class="ph-close" id="pvClose" aria-label="داخستن">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="frame" id="frame">
+      <div class="load" id="pvLoad"><div><div class="spin"></div><p style="margin:10px 0 0">کردنەوەی فۆڕم…</p></div></div>
+    </div>
+    <div class="ph-foot">
+      <button class="main" id="pvShare">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M12 3 8 7M12 3l4 4"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+        ناردن
+      </button>
+      <button id="pvDl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 19h16"/></svg>
+        داگرتن
+      </button>
+      <button id="pvOpen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="install">
+  <img class="ic" id="installIc" alt="">
+  <div><p>دابەزاندنی ئەپ</p><small>بۆ دەستگەیشتنی خێرا لە ڕووپۆشی مۆبایل</small></div>
+  <button class="go" id="installGo">دابەزاندن</button>
+  <button class="no" id="installNo" aria-label="نا">×</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CONFIG = {
+  // Apps Script web app (/exec). Re-deploy with a NEW version after editing Code.gs,
+  // or this URL keeps serving the old code.
+  API: "https://script.google.com/macros/s/AKfycbzpi9zIxdRicG6UFg_nnXhdAMsusEo8Ndqz1cinkkPJt6ZBTSKEei4qkICKTl_aFc5TMg/exec",
+  FOLDER: "1BocdNXyDDQ9sO3_huoIpv1ltS61a9m5P"
+};
+
+/* ============================================================
+   BUILT-IN FORM LIST  (fallback + instant first paint)
+   ============================================================ */
+let FORMS = [
+ {n:"فۆڕمی یەکسانکردنی ماستەر و دکتۆرا",c:"خوێندنی باڵا",e:"Postgraduate Studies",id:"1fcRYB7Ypr7mGho1Zozm4beq7YYApMwV2"},
+ {n:"فۆرمەکانی پێدانی نازناوی م.ی",c:"نازناو و پلەبەرزکردنەوە",e:"Academic Titles & Promotion",id:"1cEYFZHI3ajggWQL9hHu68BtwjIH3nCTA"},
+ {n:"فۆڕمی سیمیناری پلەبەرزکردنەوە",c:"نازناو و پلەبەرزکردنەوە",e:"Academic Titles & Promotion",id:"1wuL7_iDcPG21Qho8HnNfisxGb7_tIYLk"},
+ {n:"ڕێبەری توێژینەوەی دەرچوون",c:"توێژینەوەی دەرچوون (قۆناغی ٤)",e:"Graduation Research (Stage 4)",id:"1Bd-HbbFdbup1Fv7Bm378lRuzMrzOW-q-"},
+ {n:"هەڵسەنگێنەری یەکەم توێژینەوە ق٤",c:"توێژینەوەی دەرچوون (قۆناغی ٤)",e:"Graduation Research (Stage 4)",id:"1X9l8POMXWuHcXRl1Gm0M_oQDL0L99siw"},
+ {n:"هەڵسەنگێنەری دووەم توێژینەوە ق٤",c:"توێژینەوەی دەرچوون (قۆناغی ٤)",e:"Graduation Research (Stage 4)",id:"1ZgeCK0Sz2ZdjRzNiYwo8keeaQVaKgoik"},
+ {n:"سەرپەرشتیار توێژینەوە ق٤",c:"توێژینەوەی دەرچوون (قۆناغی ٤)",e:"Graduation Research (Stage 4)",id:"18H7ck894Xb5O7WGh_KktqCT1q-FAmubP"},
+ {n:"پڕۆژەی توێژینەوەی ق٤",c:"توێژینەوەی دەرچوون (قۆناغی ٤)",e:"Graduation Research (Stage 4)",id:"1r1uHZxcxAY5YeYtDuq5Xwn1CRTz95yxy"},
+ {n:"فۆڕمی زانیاری مامۆستایان",c:"ئیداری و گشتی",e:"Administrative & General",id:"1DQE2ud-p9kWCY5EHnHQJo3B3T45RK4v8"},
+ {n:"فۆڕمی بەرزکردنەوەی نازناو",c:"نازناو و پلەبەرزکردنەوە",e:"Academic Titles & Promotion",id:"1B_AkTC3C_mSJ-vgn9OX-v4W0dGXiXmn_"},
+ {n:"پێداویستییەکانی پلەبەرزکردنەوە",c:"نازناو و پلەبەرزکردنەوە",e:"Academic Titles & Promotion",id:"1DYRlpHy_exPA86eWrpMahisHh84AWtBx"},
+ {n:"فۆرمی ڕاساندنی توێژینەوە",c:"توێژینەوەی زانستی",e:"Scientific Research",id:"1i4D8FHx7fZ21yAsUDnrySZj1ZGoNt0vJ"},
+ {n:"داواکاری پاداشتی توێژینەوە",c:"توێژینەوەی زانستی",e:"Scientific Research",id:"1gTpgWPLgd4rPn4h28yzLYFvlNDp7vIYp"},
+ {n:"گۆڕینی ناونیشانی توێژینەوە",c:"توێژینەوەی زانستی",e:"Scientific Research",id:"1CM144WrxgE_s0pVVRZXf84QLsFS9b2aa"},
+ {n:"جێگیرکردنی ناونیشانی توێژینەوە",c:"توێژینەوەی زانستی",e:"Scientific Research",id:"1Ul2BFLuUw_k0HTBpSOBBjnPKoX7qT1WJ"},
+ {n:"بەڵێننامەی وەرگرتنی زەوی",c:"ئیداری و گشتی",e:"Administrative & General",id:"1Iz2E_YsbfAnnHNwryxoHgZACLyUqeEXj"},
+ {n:"فۆڕمی گفتوگۆکردنی ماستەر و دکتۆرا",c:"خوێندنی باڵا",e:"Postgraduate Studies",id:"1LfHLX__WAIJJo6nxdQJ7ULRH77pprSSf"},
+ {n:"فۆرمی هەڵێنجاندن (استلال)",c:"توێژینەوەی زانستی",e:"Scientific Research",id:"1Ly-qV9XWRTp1Tipni_idScg3WX6RX9Vb"}
+];
+
+/* ============================================================
+   small helpers
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+const viewUrl = id => `https://drive.google.com/file/d/${id}/view`;
+const prevUrl = id => `https://drive.google.com/file/d/${id}/preview`;
+const dlUrl   = id => `https://drive.google.com/uc?export=download&id=${id}`;
+const thumbUrl= id => `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+
+let toastT;
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+/* ============================================================
+   icon generation (canvas → PNG data URL) — no image files needed
+   ============================================================ */
+function rr(x,a,b,w,h,r){
+  x.beginPath();
+  x.moveTo(a+r,b); x.lineTo(a+w-r,b); x.quadraticCurveTo(a+w,b,a+w,b+r);
+  x.lineTo(a+w,b+h-r); x.quadraticCurveTo(a+w,b+h,a+w-r,b+h);
+  x.lineTo(a+r,b+h); x.quadraticCurveTo(a,b+h,a,b+h-r);
+  x.lineTo(a,b+r); x.quadraticCurveTo(a,b,a+r,b); x.closePath();
+}
+function makeIcon(size,pad){
+  const c=el('canvas'); c.width=c.height=size;
+  const x=c.getContext('2d'), s=size;
+  const g=x.createLinearGradient(0,0,s,s);
+  g.addColorStop(0,'#14b8a6'); g.addColorStop(.55,'#0f766e'); g.addColorStop(1,'#064e3b');
+  rr(x,0,0,s,s,s*0.23); x.fillStyle=g; x.fill();
+
+  const k=pad?0.70:0.84, o=(1-k)/2*s, u=s*k;  // maskable safe-zone
+  // document sheet
+  x.fillStyle='rgba(255,255,255,.96)';
+  rr(x,o+u*0.20,o+u*0.08,u*0.60,u*0.84,u*0.08); x.fill();
+  // folded corner
+  x.fillStyle='rgba(13,148,136,.28)';
+  x.beginPath();
+  x.moveTo(o+u*0.80,o+u*0.08); x.lineTo(o+u*0.80,o+u*0.26); x.lineTo(o+u*0.62,o+u*0.26);
+  x.closePath(); x.fill();
+  // DNA double helix over the sheet
+  x.strokeStyle='#0f766e'; x.lineWidth=Math.max(2,u*0.045); x.lineCap='round';
+  const top=o+u*0.30, bot=o+u*0.80, cx=o+u*0.50, amp=u*0.14;
+  for(const dir of [1,-1]){
+    x.beginPath();
+    for(let i=0;i<=40;i++){
+      const t=i/40, yy=top+(bot-top)*t;
+      const xx=cx+dir*amp*Math.sin(t*Math.PI*2.2);
+      i?x.lineTo(xx,yy):x.moveTo(xx,yy);
+    }
+    x.stroke();
+  }
+  x.lineWidth=Math.max(1.5,u*0.032); x.strokeStyle='rgba(245,158,11,.95)';
+  for(let i=1;i<=5;i++){
+    const t=i/6, yy=top+(bot-top)*t;
+    const dx=amp*Math.sin(t*Math.PI*2.2);
+    x.beginPath(); x.moveTo(cx+dx,yy); x.lineTo(cx-dx,yy); x.stroke();
+  }
+  return c.toDataURL('image/png');
+}
+
+function setupPWA(){
+  const i192=makeIcon(192,false), i512=makeIcon(512,false), i512m=makeIcon(512,true);
+  $('#ati').href=i192; $('#fav').href=i192; $('#installIc').src=i192;
+  $('#logoBox').innerHTML=`<img src="${i192}" style="width:30px;height:30px;border-radius:8px">`;
+  const mani={
+    name:"فۆڕمەکانی بەشی بایۆتەکنەلۆجی",
+    short_name:"فۆڕمەکان",
+    description:"پۆرتاڵی فۆڕمە فەرمییەکانی بەشی بایۆتەکنەلۆجی – زانکۆی ڕاپەڕین",
+    start_url:location.pathname,
+    scope:location.pathname.replace(/[^/]*$/,''),
+    display:"standalone", orientation:"portrait",
+    background_color:"#0f766e", theme_color:"#0f766e", lang:"ckb", dir:"rtl",
+    icons:[
+      {src:i192,sizes:"192x192",type:"image/png",purpose:"any"},
+      {src:i512,sizes:"512x512",type:"image/png",purpose:"any"},
+      {src:i512m,sizes:"512x512",type:"image/png",purpose:"maskable"}
+    ]
+  };
+  try{
+    $('#mf').href=URL.createObjectURL(new Blob([JSON.stringify(mani)],{type:'application/manifest+json'}));
+  }catch(e){}
+}
+
+/* ============================================================
+   state
+   ============================================================ */
+let activeCat='ALL', query='', onlyFav=false;
+let view = store.get('view','grid');
+let favs = store.get('favs',[]);
+
+/* ============================================================
+   theme
+   ============================================================ */
+function applyTheme(t){
+  if(t) document.documentElement.setAttribute('data-theme',t);
+  else document.documentElement.removeAttribute('data-theme');
+  const dark = t==='dark' || (!t && matchMedia('(prefers-color-scheme:dark)').matches);
+  $('#themeIcon').innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>'
+    : '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+}
+applyTheme(store.get('theme',null));
+$('#themeBtn').onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const sysDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const next = cur ? (cur==='dark'?'light':'dark') : (sysDark?'light':'dark');
+  store.set('theme',next); applyTheme(next);
+};
+
+/* ============================================================
+   render
+   ============================================================ */
+function cats(){
+  const m=new Map();
+  FORMS.forEach(f=>m.set(f.c,(m.get(f.c)||0)+1));
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+}
+
+function drawChips(){
+  const c=$('#chips'); c.innerHTML='';
+  const mk=(label,count,val)=>{
+    const b=el('button','chip'+(activeCat===val&&!onlyFav?' on':''));
+    b.innerHTML=`${label}<b>${count}</b>`;
+    b.onclick=()=>{ activeCat=val; onlyFav=false; drawChips(); draw(); };
+    c.appendChild(b);
+  };
+  mk('هەموو',FORMS.length,'ALL');
+  cats().forEach(([name,n])=>mk(name,n,name));
+}
+
+function filtered(){
+  const q=query.trim().toLowerCase();
+  return FORMS.filter(f=>{
+    if(onlyFav && !favs.includes(f.id)) return false;
+    if(!onlyFav && activeCat!=='ALL' && f.c!==activeCat) return false;
+    if(!q) return true;
+    return (f.n+' '+f.c+' '+(f.e||'')).toLowerCase().includes(q);
+  });
+}
+
+function skeleton(){
+  const g=$('#grid'); g.innerHTML='';
+  for(let i=0;i<8;i++){
+    const s=el('div','sk'); s.innerHTML='<div class="a"></div><div class="b"></div><div class="b" style="width:60%"></div>';
+    g.appendChild(s);
+  }
+}
+
+function draw(){
+  const g=$('#grid');
+  g.className='grid'+(view==='list'?' list':'');
+  const list=filtered();
+  $('#count').textContent = onlyFav
+    ? `${list.length} فۆڕمی دڵخواز`
+    : `${list.length} فۆڕم${activeCat!=='ALL'?' لە '+activeCat:''}`;
+  g.innerHTML='';
+
+  if(!list.length){
+    const e=el('div','empty');
+    e.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg><p>هیچ فۆڕمێک نەدۆزرایەوە</p>`;
+    g.appendChild(e); return;
+  }
+
+  list.forEach(f=>{
+    const card=el('article','card');
+
+    const th=el('div','thumb');
+    th.innerHTML=`<svg class="ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>`;
+    const img=new Image();
+    img.loading='lazy'; img.alt=f.n; img.referrerPolicy='no-referrer';
+    img.onload=()=>{ th.innerHTML=''; th.appendChild(img); addBadge(); };
+    img.src=thumbUrl(f.id);
+    function addBadge(){
+      const b=el('span','badge'); b.textContent='PDF'; th.appendChild(b);
+      th.appendChild(favBtn());
+    }
+    const b0=el('span','badge'); b0.textContent='PDF'; th.appendChild(b0);
+    th.appendChild(favBtn());
+    th.onclick=()=>preview(f);
+
+    function favBtn(){
+      const fb=el('button','fav'+(favs.includes(f.id)?' on':''));
+      fb.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg>';
+      fb.onclick=ev=>{
+        ev.stopPropagation();
+        const i=favs.indexOf(f.id);
+        if(i<0){ favs.push(f.id); toast('زیادکرا بۆ دڵخوازەکان'); }
+        else { favs.splice(i,1); toast('لابرا لە دڵخوازەکان'); }
+        store.set('favs',favs); draw();
+      };
+      return fb;
+    }
+
+    const body=el('div','body');
+    const nm=el('h2','name'); nm.textContent=f.n; nm.onclick=()=>preview(f);
+    const ct=el('p','cat'); ct.textContent=f.c;
+    const ac=el('div','acts');
+
+    const bP=el('button','main'); bP.title='بینین';
+    bP.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.8-7 10-7 10 7 10 7-3.8 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+    bP.onclick=()=>preview(f);
+
+    const bS=el('button'); bS.title='ناردن';
+    bS.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M12 3 8 7M12 3l4 4"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>';
+    bS.onclick=()=>share(f);
+
+    const bD=el('button'); bD.title='داگرتن';
+    bD.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 19h16"/></svg>';
+    bD.onclick=()=>download(f);
+
+    ac.append(bP,bS,bD);
+    body.append(nm,ct,ac);
+    card.append(th,body);
+    g.appendChild(card);
+  });
+}
+
+/* ============================================================
+   actions: preview / download / share
+   ============================================================ */
+let current=null;
+function preview(f){
+  current=f;
+  $('#pvName').textContent=f.n;
+  const fr=$('#frame');
+  fr.innerHTML='<div class="load"><div><div class="spin"></div><p style="margin:10px 0 0">کردنەوەی فۆڕم…</p></div></div>';
+  const ifr=el('iframe');
+  ifr.allow='autoplay'; ifr.title=f.n;
+  ifr.onload=()=>{ const l=fr.querySelector('.load'); if(l) l.remove(); };
+  ifr.src=prevUrl(f.id);
+  fr.appendChild(ifr);
+  setTimeout(()=>{
+    const l=fr.querySelector('.load');
+    if(l) l.innerHTML='<div><p>ئەگەر فۆڕمەکە دەرنەکەوت، دڵنیابە فۆڵدەری درایڤ بە <b>Anyone with the link</b> هاوبەش کراوە.</p></div>';
+  },9000);
+  $('#sheet').classList.add('on');
+  document.body.style.overflow='hidden';
+  bump(f);
+  ping('view',f.id);
+}
+function closeSheet(){
+  $('#sheet').classList.remove('on');
+  $('#frame').innerHTML='';
+  document.body.style.overflow='';
+}
+$('#pvClose').onclick=closeSheet;
+$('#sheet').onclick=e=>{ if(e.target.id==='sheet') closeSheet(); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && $('#sheet').classList.contains('on')) closeSheet(); });
+
+function download(f){
+  ping('download',f.id);
+  const a=el('a'); a.href=dlUrl(f.id); a.target='_blank'; a.rel='noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('داگرتن دەستی پێکرد…');
+}
+
+async function share(f){
+  const url=viewUrl(f.id);
+  ping('share',f.id);
+
+  // 1) try sharing the real PDF file (needs the Apps Script backend)
+  if(CONFIG.API && navigator.canShare){
+    try{
+      toast('ئامادەکردنی فایل…');
+      const r=await fetch(`${CONFIG.API}?action=file&id=${encodeURIComponent(f.id)}`);
+      const j=await r.json();
+      if(j && j.ok && j.data){
+        const bin=atob(j.data), arr=new Uint8Array(bin.length);
+        for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+        const file=new File([arr], (j.name||f.n)+(/\.pdf$/i.test(j.name||'')?'':'.pdf'), {type:j.mime||'application/pdf'});
+        if(navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:f.n});
+          return;
+        }
+      }
+    }catch(err){ /* fall through to link share */ }
+  }
+
+  // 2) share the link through the OS share sheet
+  if(navigator.share){
+    try{ await navigator.share({title:f.n,text:f.n,url}); return; }
+    catch(e){ if(e.name==='AbortError') return; }
+  }
+
+  // 3) copy to clipboard
+  try{ await navigator.clipboard.writeText(url); toast('بەستەر کۆپی کرا'); }
+  catch(e){ window.open(url,'_blank','noopener'); }
+}
+
+$('#pvShare').onclick=()=>current&&share(current);
+$('#pvDl').onclick   =()=>current&&download(current);
+$('#pvOpen').onclick =()=>current&&window.open(viewUrl(current.id),'_blank','noopener');
+
+/* recently viewed */
+function bump(f){
+  let r=store.get('recent',[]);
+  r=[f.id,...r.filter(x=>x!==f.id)].slice(0,12);
+  store.set('recent',r);
+}
+/* optional analytics ping — silently ignored when API is empty */
+function ping(action,id){
+  if(!CONFIG.API) return;
+  try{
+    navigator.sendBeacon
+      ? navigator.sendBeacon(`${CONFIG.API}?action=log&event=${action}&id=${encodeURIComponent(id)}`)
+      : fetch(`${CONFIG.API}?action=log&event=${action}&id=${encodeURIComponent(id)}`,{mode:'no-cors'});
+  }catch(e){}
+}
+
+/* ============================================================
+   controls
+   ============================================================ */
+$('#q').addEventListener('input',e=>{
+  query=e.target.value;
+  $('#clearQ').classList.toggle('on',!!query);
+  draw();
+});
+$('#clearQ').onclick=()=>{ query=''; $('#q').value=''; $('#clearQ').classList.remove('on'); draw(); $('#q').focus(); };
+
+$('#vGrid').onclick=()=>{ view='grid'; store.set('view',view); $('#vGrid').classList.add('on'); $('#vList').classList.remove('on'); draw(); };
+$('#vList').onclick=()=>{ view='list'; store.set('view',view); $('#vList').classList.add('on'); $('#vGrid').classList.remove('on'); draw(); };
+if(view==='list'){ $('#vList').classList.add('on'); $('#vGrid').classList.remove('on'); }
+
+$('#favBtn').onclick=()=>{
+  onlyFav=!onlyFav;
+  $('#favBtn').style.background = onlyFav?'rgba(245,158,11,.9)':'';
+  if(onlyFav && !favs.length) toast('هێشتا هیچ فۆڕمێکی دڵخواز نییە');
+  drawChips(); draw();
+};
+
+/* ============================================================
+   install prompt
+   ============================================================ */
+let deferred=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferred=e;
+  if(!store.get('noInstall',false)) setTimeout(()=>$('#install').classList.add('on'),2600);
+});
+$('#installGo').onclick=async()=>{
+  $('#install').classList.remove('on');
+  if(deferred){ deferred.prompt(); await deferred.userChoice; deferred=null; }
+};
+$('#installNo').onclick=()=>{ $('#install').classList.remove('on'); store.set('noInstall',true); };
+
+/* iOS hint (iOS has no beforeinstallprompt) */
+(function iosHint(){
+  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+  if(iOS && !standalone && !store.get('noIosHint',false)){
+    setTimeout(()=>{
+      toast('بۆ دابەزاندن: Share ← Add to Home Screen');
+      store.set('noIosHint',true);
+    },3200);
+  }
+})();
+
+/* ============================================================
+   live refresh from Apps Script (optional)
+   ============================================================ */
+async function refresh(){
+  const cached=store.get('forms',null);
+  if(cached && cached.length){ FORMS=cached; drawChips(); draw(); }
+  if(!CONFIG.API) return;
+  try{
+    const r=await fetch(`${CONFIG.API}?action=list`,{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.ok && Array.isArray(j.forms) && j.forms.length){
+      FORMS=j.forms;
+      store.set('forms',FORMS);
+      drawChips(); draw();
+    }
+  }catch(e){ /* keep built-in list */ }
+}
+
+/* ============================================================
+   boot
+   ============================================================ */
+setupPWA();
+skeleton();
+drawChips();
+draw();
+refresh();
+$('#stamp').textContent = `${FORMS.length} فۆڕم • نوێکراوەتەوە ${new Date().toLocaleDateString('en-GB')}`;
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
