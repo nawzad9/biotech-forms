@@ -10,9 +10,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="فۆڕمەکان">
-<link id="mf" rel="manifest">
-<link id="ati" rel="apple-touch-icon">
-<link id="fav" rel="icon" type="image/png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -202,6 +202,27 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px 90px}
 .ph-foot button svg{width:17px;height:17px}
 .ph-foot button:active{opacity:.75}
 
+/* ---------- email dialog ---------- */
+.panel.dlg{height:auto;max-height:92vh}
+@media(min-width:760px){ .panel.dlg{height:auto;max-width:460px} }
+.dlg-body{padding:16px 16px 6px;overflow-y:auto}
+.dlg-form{
+  margin:0 0 16px;padding:10px 12px;border-radius:12px;background:var(--surface-2);
+  font-size:.8rem;font-weight:600;line-height:1.6
+}
+.dlg-body label{display:block;font-size:.74rem;color:var(--muted);margin:0 0 6px;font-weight:500}
+.dlg-body input,.dlg-body textarea{
+  width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font-size:.85rem;outline:none;margin:0 0 14px;
+  resize:none;transition:border-color .16s
+}
+.dlg-body input:focus,.dlg-body textarea:focus{border-color:var(--brand)}
+.dlg-hint{font-size:.72rem;color:var(--muted);line-height:1.7;min-height:1.2em}
+.dlg-hint.err{color:#dc2626}
+.dlg-hint.ok{color:var(--brand);font-weight:600}
+:root[data-theme="dark"] .dlg-hint.err{color:#f87171}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .dlg-hint.err{color:#f87171} }
+
 /* ---------- toast / install ---------- */
 #toast{
   position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(16px);
@@ -293,9 +314,40 @@ footer{text-align:center;padding:24px 16px 34px;color:var(--muted);font-size:.7r
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 19h16"/></svg>
         داگرتن
       </button>
+      <button id="pvMail">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        ئیمەیڵ
+      </button>
       <button id="pvOpen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- email dialog -->
+<div class="sheet" id="mailSheet">
+  <div class="panel dlg">
+    <div class="ph-head">
+      <h3>ناردنی فۆڕم بە ئیمەیڵ</h3>
+      <button class="ph-close" id="mailClose" aria-label="داخستن">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body">
+      <p class="dlg-form" id="mailForm"></p>
+      <label for="mailTo">ناونیشانی ئیمەیڵ</label>
+      <input id="mailTo" type="email" inputmode="email" autocomplete="email" dir="ltr" placeholder="name@example.com">
+      <label for="mailNote">تێبینی (ئارەزوومەندانە)</label>
+      <textarea id="mailNote" rows="3" placeholder="…"></textarea>
+      <div class="dlg-hint" id="mailHint"></div>
+    </div>
+    <div class="ph-foot">
+      <button class="main" id="mailSend">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10.5 13.5"/><path d="M21 3 14.5 21l-4-7.5L3 9.5z"/></svg>
+        ناردن
+      </button>
+      <button id="mailApp">ئەپی ئیمەیڵ</button>
     </div>
   </div>
 </div>
@@ -412,27 +464,17 @@ function makeIcon(size,pad){
   return c.toDataURL('image/png');
 }
 
+/* The manifest and icons are real files now (manifest.json, icon-*.png) — that is
+   what lets Android mint a WebAPK instead of a plain home-screen shortcut.
+   The canvas drawing is kept only as a fallback for the in-app logo, so the
+   header still looks right if the PNG hasn't loaded yet. */
 function setupPWA(){
-  const i192=makeIcon(192,false), i512=makeIcon(512,false), i512m=makeIcon(512,true);
-  $('#ati').href=i192; $('#fav').href=i192; $('#installIc').src=i192;
-  $('#logoBox').innerHTML=`<img src="${i192}" style="width:30px;height:30px;border-radius:8px">`;
-  const mani={
-    name:"فۆڕمەکانی بەشی بایۆتەکنەلۆجی",
-    short_name:"فۆڕمەکان",
-    description:"پۆرتاڵی فۆڕمە فەرمییەکانی بەشی بایۆتەکنەلۆجی – زانکۆی ڕاپەڕین",
-    start_url:location.pathname,
-    scope:location.pathname.replace(/[^/]*$/,''),
-    display:"standalone", orientation:"portrait",
-    background_color:"#0f766e", theme_color:"#0f766e", lang:"ckb", dir:"rtl",
-    icons:[
-      {src:i192,sizes:"192x192",type:"image/png",purpose:"any"},
-      {src:i512,sizes:"512x512",type:"image/png",purpose:"any"},
-      {src:i512m,sizes:"512x512",type:"image/png",purpose:"maskable"}
-    ]
-  };
-  try{
-    $('#mf').href=URL.createObjectURL(new Blob([JSON.stringify(mani)],{type:'application/manifest+json'}));
-  }catch(e){}
+  const logo=$('#logoBox');
+  const im=new Image();
+  im.onload =()=>{ logo.innerHTML=`<img src="icon-192.png" style="width:30px;height:30px;border-radius:8px">`; };
+  im.onerror=()=>{ try{ logo.innerHTML=`<img src="${makeIcon(192,false)}" style="width:30px;height:30px;border-radius:8px">`; }catch(e){} };
+  im.src='icon-192.png';
+  $('#installIc').src='icon-192.png';
 }
 
 /* ============================================================
@@ -520,17 +562,10 @@ function draw(){
 
     const th=el('div','thumb');
     th.innerHTML=`<svg class="ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>`;
-    const img=new Image();
-    img.loading='lazy'; img.alt=f.n; img.referrerPolicy='no-referrer';
-    img.onload=()=>{ th.innerHTML=''; th.appendChild(img); addBadge(); };
-    img.src=thumbUrl(f.id);
-    function addBadge(){
-      const b=el('span','badge'); b.textContent='PDF'; th.appendChild(b);
-      th.appendChild(favBtn());
-    }
     const b0=el('span','badge'); b0.textContent='PDF'; th.appendChild(b0);
     th.appendChild(favBtn());
     th.onclick=()=>preview(f);
+    loadThumb(th,f);
 
     function favBtn(){
       const fb=el('button','fav'+(favs.includes(f.id)?' on':''));
@@ -570,6 +605,63 @@ function draw(){
 }
 
 /* ============================================================
+   thumbnails
+   Drive's public thumbnail endpoint is tried first (fast, no backend hit).
+   When it 403s — which it does for some files even in a public folder — we
+   fall back to the Apps Script backend, which renders the thumbnail with the
+   owner's own Drive access. Results are cached so this happens once.
+   ============================================================ */
+const thumbCache = store.get('thumbs',{});
+let thumbSaveT;
+function saveThumbs(){ clearTimeout(thumbSaveT); thumbSaveT=setTimeout(()=>store.set('thumbs',thumbCache),600); }
+
+function showThumb(th,src,alt){
+  const img=new Image();
+  img.alt=alt; img.decoding='async';
+  img.onload=()=>{
+    if(!th.isConnected) return;
+    const ph=th.querySelector('.ph'); if(ph) ph.remove();
+    th.insertBefore(img, th.firstChild);
+  };
+  img.src=src;
+}
+
+/* at most 3 backend thumbnail requests in flight — Apps Script is slow */
+const tq={q:[],busy:0};
+function queueThumb(fn){ tq.q.push(fn); pumpThumbs(); }
+function pumpThumbs(){
+  while(tq.busy<3 && tq.q.length){
+    tq.busy++;
+    tq.q.shift()().finally(()=>{ tq.busy--; pumpThumbs(); });
+  }
+}
+
+function loadThumb(th,f){
+  if(thumbCache[f.id]){ showThumb(th,thumbCache[f.id],f.n); return; }
+  const probe=new Image();
+  probe.alt=f.n; probe.loading='lazy'; probe.decoding='async';
+  probe.onload=()=>{
+    if(!th.isConnected) return;
+    const ph=th.querySelector('.ph'); if(ph) ph.remove();
+    th.insertBefore(probe, th.firstChild);
+  };
+  probe.onerror=()=>{ if(CONFIG.API) queueThumb(()=>backendThumb(th,f)); };
+  probe.src=thumbUrl(f.id);
+}
+
+async function backendThumb(th,f){
+  try{
+    const r=await fetch(`${CONFIG.API}?action=thumb&id=${encodeURIComponent(f.id)}`);
+    const j=await r.json();
+    if(j && j.ok && j.data){
+      const src='data:'+(j.mime||'image/png')+';base64,'+j.data;
+      thumbCache[f.id]=src; saveThumbs();
+      showThumb(th,src,f.n);
+    }
+  }catch(e){ /* placeholder stays */ }
+}
+
+/* ============================================================
    actions: preview / download / share
    ============================================================ */
 let current=null;
@@ -599,7 +691,11 @@ function closeSheet(){
 }
 $('#pvClose').onclick=closeSheet;
 $('#sheet').onclick=e=>{ if(e.target.id==='sheet') closeSheet(); };
-document.addEventListener('keydown',e=>{ if(e.key==='Escape' && $('#sheet').classList.contains('on')) closeSheet(); });
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape') return;
+  if($('#mailSheet').classList.contains('on')) closeMail();
+  else if($('#sheet').classList.contains('on')) closeSheet();
+});
 
 function download(f){
   ping('download',f.id);
@@ -643,7 +739,89 @@ async function share(f){
 
 $('#pvShare').onclick=()=>current&&share(current);
 $('#pvDl').onclick   =()=>current&&download(current);
+$('#pvMail').onclick =()=>current&&openMail(current);
 $('#pvOpen').onclick =()=>current&&window.open(viewUrl(current.id),'_blank','noopener');
+
+/* ============================================================
+   email
+   With the backend: Apps Script mails the PDF as a real attachment.
+   Without it: falls back to a mailto: link carrying the Drive link.
+   ============================================================ */
+let mailFor=null;
+function openMail(f){
+  mailFor=f;
+  $('#mailForm').textContent=f.n;
+  $('#mailTo').value=store.get('lastEmail','');
+  $('#mailNote').value='';
+  const hint=$('#mailHint');
+  hint.className='dlg-hint';
+  hint.textContent = CONFIG.API
+    ? 'فۆڕمەکە وەک پەڕگەی PDF هاوپێچ دەکرێت.'
+    : 'بەستەری فۆڕمەکە دەنێردرێت (پەڕگە هاوپێچ ناکرێت).';
+  $('#mailSend').disabled=false;
+  $('#mailSheet').classList.add('on');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>$('#mailTo').focus(),250);
+}
+function closeMail(){
+  $('#mailSheet').classList.remove('on');
+  document.body.style.overflow = $('#sheet').classList.contains('on') ? 'hidden' : '';
+}
+$('#mailClose').onclick=closeMail;
+$('#mailSheet').onclick=e=>{ if(e.target.id==='mailSheet') closeMail(); };
+
+function mailtoFallback(f,to,note){
+  const body=(note?note+'\n\n':'')+f.n+'\n'+viewUrl(f.id);
+  window.location.href=`mailto:${encodeURIComponent(to||'')}?subject=${encodeURIComponent(f.n)}&body=${encodeURIComponent(body)}`;
+}
+$('#mailApp').onclick=()=>{
+  if(!mailFor) return;
+  mailtoFallback(mailFor,$('#mailTo').value.trim(),$('#mailNote').value.trim());
+  closeMail();
+};
+
+$('#mailSend').onclick=async()=>{
+  if(!mailFor) return;
+  const to=$('#mailTo').value.trim(), note=$('#mailNote').value.trim();
+  const hint=$('#mailHint');
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)){
+    hint.className='dlg-hint err';
+    hint.textContent='ناونیشانی ئیمەیڵ دروست نییە.';
+    $('#mailTo').focus();
+    return;
+  }
+  store.set('lastEmail',to);
+
+  if(!CONFIG.API){ mailtoFallback(mailFor,to,note); closeMail(); return; }
+
+  const btn=$('#mailSend');
+  btn.disabled=true;
+  hint.className='dlg-hint';
+  hint.textContent='دەنێردرێت…';
+  try{
+    const r=await fetch(`${CONFIG.API}?action=email`,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'email',id:mailFor.id,to:to,note:note})
+    });
+    const j=await r.json();
+    if(j && j.ok){
+      hint.className='dlg-hint ok';
+      hint.textContent='نێردرا ✓';
+      ping('email',mailFor.id);
+      setTimeout(()=>{ closeMail(); toast('فۆڕمەکە نێردرا بۆ '+to); },800);
+    }else{
+      hint.className='dlg-hint err';
+      hint.textContent = j && j.error ? j.error : 'نەنێردرا — ئەپی ئیمەیڵ تاقی بکەوە.';
+      btn.disabled=false;
+    }
+  }catch(e){
+    hint.className='dlg-hint err';
+    hint.textContent='پەیوەندی نەکرا — ئەپی ئیمەیڵ تاقی بکەوە.';
+    btn.disabled=false;
+  }
+};
 
 /* recently viewed */
 function bump(f){

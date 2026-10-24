@@ -1,0 +1,35 @@
+{
+  "name": "فۆڕمەکانی بەشی بایۆتەکنەلۆجی",
+  "short_name": "فۆڕمەکان",
+  "description": "پۆرتاڵی فۆڕمە فەرمییەکانی بەشی بایۆتەکنەلۆجی – زانکۆی ڕاپەڕین",
+  "lang": "ckb",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#0f766e",
+  "theme_color": "#0f766e",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
